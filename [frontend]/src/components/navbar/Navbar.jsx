@@ -7,7 +7,10 @@ import {
   FundOutlined,
   MenuOutlined,
   LoginOutlined,
+  MessageOutlined,
 } from "@ant-design/icons";
+import { useSelector } from "react-redux";
+import { userSelector } from "../../features/UserSlice";
 
 import icon from "../../images/crypto-icon.png";
 import "./Navbar.css";
@@ -15,6 +18,7 @@ import "./Navbar.css";
 const Navbar = () => {
   const [activeMenu, setActiveMenu] = useState(true);
   const [screenSize, setScreenSize] = useState(undefined);
+  const { token } = useSelector(userSelector);
 
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
@@ -60,11 +64,15 @@ const Navbar = () => {
             <Menu.Item icon={<BulbOutlined />}>
               <Link to="/news">News</Link>
             </Menu.Item>
-            {/* <div className="menu-item-account"> */}
+            {token ? (
+              <Menu.Item icon={<MessageOutlined />}>
+                <Link to="/news">Channels</Link>
+              </Menu.Item>
+            ) : null}
+
             <Menu.Item icon={<LoginOutlined />}>
               <Link to="/preAccount">Your account</Link>
             </Menu.Item>
-            {/* </div> */}
           </Menu>
         )}
       </div>

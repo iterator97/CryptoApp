@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { userSelector } from "../../features/UserSlice";
+import AccountPage from "../accountPage/AccountPage";
 import SignIn from "../signIn/SignIn";
 import SignUp from "../signUp/SignUp";
 
@@ -11,7 +12,7 @@ const PreAccount = () => {
   return (
     <>
       {isSuccess ? (
-        <div>Twoje konto</div>
+        <AccountPage />
       ) : (
         <div className="container">
           {showLoginPage ? (
