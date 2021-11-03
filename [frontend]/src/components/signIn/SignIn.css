@@ -1,0 +1,26 @@
+.sign-in-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 20%;
+  margin-bottom: 20%;
+}
+
+.sign-in-title {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.sing-in-button {
+  margin-left: 40px;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.redirect-button {
+  display: flex;
+  margin-left: 72px;
+  color: var(--blue);
+}
