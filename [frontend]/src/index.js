@@ -9,10 +9,14 @@ import store from "./app/store";
 
 import "antd/dist/antd.css";
 
+import { createBrowserHistory } from "history";
+
+export const history = createBrowserHistory();
+
 ReactDOM.render(
   <React.StrictMode>
     <CookiesProvider>
-      <Router>
+      <Router history={history}>
         <Provider store={store}>
           <App />
         </Provider>

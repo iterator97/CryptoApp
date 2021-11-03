@@ -87,6 +87,10 @@ const userSlice = createSlice({
   initialState: initialState,
   reducers: {
     clearState: (state) => {
+      state.firstName = "";
+      state.lastName = "";
+      state.email = "";
+      state.token = "";
       state.isError = false;
       state.isSuccess = false;
       state.isFetching = false;
