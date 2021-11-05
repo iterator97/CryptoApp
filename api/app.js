@@ -5,8 +5,6 @@ const mongoose = require("mongoose");
 const bodyparser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const User = require("./models/User");
-const { auth } = require("./auth/auth");
 
 const app = express();
 
@@ -28,11 +26,14 @@ const loginRoute = require("./routes/login");
 const registerRoute = require("./routes/register");
 const profileRoute = require("./routes/profile");
 const logoutRoute = require("./routes/logout");
+const channelRoute = require("./routes/channel");
 
 app.use("/login", loginRoute);
 app.use("/register", registerRoute);
 app.use("/profile", profileRoute);
 app.use("/logout", logoutRoute);
+
+app.use("/channel", channelRoute);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

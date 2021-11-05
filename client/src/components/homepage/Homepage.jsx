@@ -16,6 +16,8 @@ const Homepage = () => {
 
   if (isFetching) return <Loader />;
 
+  console.log(globalStats.total24hVolume);
+
   return (
     <>
       <Title level={2} className="heading home-title">
@@ -51,7 +53,7 @@ const Homepage = () => {
           <Statistic
             span={6}
             title="Total 24h Volume "
-            value={millify(globalStats.total24hVolume)}
+            // value={millify(globalStats.total24hVolume)}
           />
         </Col>
         <Col span={4}>
