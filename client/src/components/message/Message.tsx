@@ -9,7 +9,7 @@ interface MessageProps {
 
 const Message = (props: MessageProps) => {
   return (
-    <div className="hhhh">
+    <div className="message-content-container">
       <div className="message-author">
         <div className="message-first-name">{props?.firstName}</div>
         <div className="message-last-name">{props?.lastName}:</div>

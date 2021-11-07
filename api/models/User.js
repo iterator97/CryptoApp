@@ -56,7 +56,6 @@ userSchema.pre("save", function (next) {
 });
 
 userSchema.methods.comparepassword = function (password, cb) {
-  console.log(cb);
   bcrypt.compare(password, this.password, function (err, isMatch) {
     if (err) return cb(next);
     cb(null, isMatch);
@@ -64,7 +63,6 @@ userSchema.methods.comparepassword = function (password, cb) {
 };
 
 userSchema.methods.generateToken = function (cb) {
-  console.log(cb);
   var user = this;
   var token = jwt.sign(user._id.toHexString(), confiq.SECRET);
 
@@ -77,7 +75,6 @@ userSchema.methods.generateToken = function (cb) {
 
 userSchema.statics.findByToken = function (token, cb) {
   var user = this;
-  console.log(cb);
 
   jwt.verify(token, confiq.SECRET, function (err, decode) {
     user.findOne({ _id: decode, token: token }, function (err, user) {
@@ -89,7 +86,6 @@ userSchema.statics.findByToken = function (token, cb) {
 
 userSchema.methods.deleteToken = function (token, cb) {
   var user = this;
-  console.log(cb);
   user.update({ $unset: { token: 1 } }, function (err, user) {
     if (err) return cb(err);
     cb(null, user);

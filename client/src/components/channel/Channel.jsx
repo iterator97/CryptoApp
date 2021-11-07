@@ -35,10 +35,7 @@ const Channels = () => {
 
   useEffect(() => {
     socket.current.emit("addUser", userId);
-    socket.current.on("getUsers", (users) => {
-      console.log("Active users:");
-      console.log(users);
-    });
+    socket.current.on("getUsers", (users) => {});
   }, [id]);
 
   useEffect(() => {

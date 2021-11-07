@@ -3,13 +3,10 @@ import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 import { CookiesProvider } from "react-cookie";
-
+import "antd/dist/antd.css";
+import { createBrowserHistory } from "history";
 import App from "./App";
 import store from "./app/store";
-
-import "antd/dist/antd.css";
-
-import { createBrowserHistory } from "history";
 
 export const history = createBrowserHistory();
 

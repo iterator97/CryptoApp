@@ -98,10 +98,9 @@ export const signOut = createAsyncThunk(
         }),
       });
       if (response.status === 200) {
-        console.log("Sign out succesfully");
         clearState();
       } else {
-        console.log("Sign out error =");
+        console.log("Sign out error ");
       }
     } catch (e) {
       console.log(e);
@@ -144,7 +143,6 @@ export const sendMessage = createAsyncThunk(
   "users/sendMessage",
   async ({ token, channel, message }: any, thunkAPI) => {
     try {
-      console.log(token, channel, message);
       const response = await fetch("http://localhost:5000/channel/addmessage", {
         method: "POST",
         headers: {
@@ -241,8 +239,6 @@ const userSlice = createSlice({
     );
     builder.addCase(sendMessage.pending, (state, action) => {});
     builder.addCase(sendMessage.fulfilled, (state, { payload }) => {
-      console.log(payload.messages);
-
       state.activeChannelMessages = payload.messages;
     });
     builder.addCase(sendMessage.rejected, (state, { payload }: any) => {});

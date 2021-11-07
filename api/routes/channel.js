@@ -8,34 +8,51 @@ const Creator = require("../models/Creator");
 // input: token, channel name
 router.post("/", async (req, res) => {
   let token = req.body.token;
-  User.findByToken(token, async (err, user) => {
-    if (err) return res(err);
-    if (user) {
-      const newCreator = new Creator({
-        userId: user._id.toString(),
-        firstName: user.firstName,
-        lastName: user.lastName,
-      });
-      await newCreator.save();
 
-      const newChannel = new Channel({
-        name: req.body.name,
-        creator: new Creator({
+  User.findByToken(token, async (err, user) => {
+    if (err) {
+      return res.status(400).json({
+        success: false,
+        message: "Token undefined",
+      });
+    }
+
+    if (user) {
+      try {
+        let newCreator = new Creator({
           userId: user._id.toString(),
           firstName: user.firstName,
           lastName: user.lastName,
-        }),
-        messages: [],
-      });
-      await newChannel.save();
-      return res.status(200).json({
-        createChannelSuccesful: true,
-        message: "Create channel",
-      });
+        });
+
+        await newCreator.save();
+
+        let newChannel = new Channel({
+          name: req.body.name,
+          creator: new Creator({
+            userId: user._id.toString(),
+            firstName: user.firstName,
+            lastName: user.lastName,
+          }),
+          messages: [],
+        });
+
+        await newChannel.save();
+
+        return res.status(200).json({
+          success: true,
+          message: "Channel created",
+        });
+      } catch (error) {
+        return res.status(400).json({
+          success: false,
+          message: "Error during creating channel",
+        });
+      }
     } else {
       return res.status(400).json({
-        error: true,
-        message: "Cannot create channel, token undefined",
+        success: false,
+        message: "User not found",
       });
     }
   });
@@ -45,25 +62,36 @@ router.post("/", async (req, res) => {
 // input: token, channel, message
 router.post("/addmessage", async (req, res) => {
   let token = req.body.token;
+
   User.findByToken(token, async (err, user) => {
+    if (err) {
+      return res.status(400).json({
+        success: false,
+        message: "Token undefined",
+      });
+    }
     if (user) {
       try {
         await Channel.findOne(
           { name: req.body.channel },
           async function (err, channel) {
-            if (!channel)
+            if (!channel) {
               return res.status(400).json({
                 success: false,
                 message: "Channel not found",
               });
-            await channel.addMessage({
+            }
+
+            channel.addMessage({
               userId: user._id.toString(),
               firstName: user.firstName,
               lastName: user.lastName,
               content: req.body.message,
               date: Date.now(),
             });
+
             await channel.save();
+
             return res.status(200).json({
               messages: channel.messages,
               success: true,
@@ -72,12 +100,15 @@ router.post("/addmessage", async (req, res) => {
           }
         );
       } catch (error) {
-        console.log(error);
+        return res.status(400).json({
+          success: false,
+          message: "Error during add message",
+        });
       }
     } else {
       return res.status(400).json({
         success: false,
-        message: "Unknown error",
+        message: "User not found",
       });
     }
   });
@@ -87,22 +118,28 @@ router.post("/addmessage", async (req, res) => {
 // input: token, channel
 router.post("/getmessages", async (req, res) => {
   let token = req.body.token;
+
   await User.findByToken(token, async (err, user) => {
-    if (err) return res(err);
+    if (err) {
+      return res.status(400).json({
+        success: false,
+        message: "Token undefined",
+      });
+    }
     if (user) {
       await Channel.findOne(
         { name: req.body.name },
         async function (err, channel) {
           return res.status(200).json({
-            isSucces: true,
+            success: true,
             messages: channel.messages,
           });
         }
       );
     } else {
       return res.status(400).json({
-        isSuccess: false,
-        message: "Cannot add message to channel, token undefined",
+        success: false,
+        message: "Cannot find user",
       });
     }
   });
