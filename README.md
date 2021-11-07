@@ -14,3 +14,5 @@
  - Api build with node js engine and mongo database provide rest api
  - Client main build with react and many other libraries provide application for user 
  - Socket provide realtime chat 
+
+Application in progress, next steps: reafactor code, fix bugs and add tests
