@@ -2,26 +2,28 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 
-// adding new user (sign-up route)
-router.post("/", (req, res) => {
-  // taking a user
+router.post("/", async (req, res) => {
   const newuser = new User(req.body);
 
   if (newuser.password != newuser.confirmPassword)
-    return res.status(400).json({ message: "password not match" });
+    return res.status(400).json({
+      succes: false,
+      message: "Password not match",
+    });
 
-  User.findOne({ email: newuser.email }, (err, user) => {
+  User.findOne({ email: newuser.email }, async (err, user) => {
     if (user)
-      return res.status(400).json({ auth: false, message: "email exits" });
+      return res.status(400).json({ succes: false, message: "Email exits" });
 
-    newuser.save((err, doc) => {
+    await newuser.save((err, doc) => {
       if (err) {
-        console.log(err);
-        return res.status(400).json({ success: false });
+        return res
+          .status(400)
+          .json({ succes: false, message: "Unknown error" });
       }
       res.status(200).json({
         succes: true,
-        user: doc,
+        message: "Register user succesfully",
       });
     });
   });

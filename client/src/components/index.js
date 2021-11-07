@@ -4,3 +4,4 @@ export { default as CryptoDetails } from "./cryptoDetails/CryptoDetails";
 export { default as Homepage } from "./homepage/Homepage";
 export { default as News } from "./news/News";
 export { default as PreAccount } from "./preAccount/PreAccount";
+export { default as Channel } from "./channel/Channel";

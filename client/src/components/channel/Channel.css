@@ -1,0 +1,41 @@
+.main-container {
+}
+
+.content-container {
+  height: 95vh;
+  display: flex;
+  flex-direction: column;
+  padding: 1% 2% 1% 1%;
+}
+
+.messages-container {
+  height: 100%;
+  overflow: scroll;
+}
+
+.input-container {
+  height: 10%;
+}
+
+.text-input {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.own-message {
+  padding-top: 8px;
+  padding-right: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.not-own-message {
+  padding-top: 8px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.add-message-btn {
+  padding-left: 16px;
+}

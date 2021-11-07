@@ -13,23 +13,18 @@ const channelSchema = Schema({
       {
         userId: {
           type: String,
-          required: true,
         },
         firstName: {
           type: String,
-          required: true,
         },
         lastName: {
           type: String,
-          required: true,
         },
         content: {
           type: String,
-          required: true,
         },
         date: {
-          type: Date,
-          required: true,
+          type: Date | null,
         },
       },
     ],
@@ -41,5 +36,10 @@ const channelSchema = Schema({
     required: true,
   },
 });
+
+channelSchema.methods.addMessage = function (content) {
+  var channel = this;
+  channel.messages.push(content);
+};
 
 module.exports = mongoose.model("Channel", channelSchema);

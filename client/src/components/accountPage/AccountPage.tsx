@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { clearState, userSelector } from "../../features/UserSlice";
+import { signOut, userSelector } from "../../features/UserSlice";
 import "./AccountPage.css";
 import { Card } from "antd";
 import { LogoutOutlined } from "@ant-design/icons";
@@ -8,10 +8,11 @@ import { LogoutOutlined } from "@ant-design/icons";
 const AccountPage = (props: any) => {
   const dispatch = useDispatch();
 
-  const { firstName, lastName, email, isSuccess } = useSelector(userSelector);
+  const { firstName, lastName, email, isSuccess, token } =
+    useSelector(userSelector);
 
   const onLogout = () => {
-    dispatch(clearState());
+    dispatch(signOut({ token }));
   };
 
   useEffect(() => {

@@ -1,3 +1,4 @@
+import { GetMessages } from "../models/GetMessages";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import SignInData from "../models/SignInData";
 import SignUpData from "../models/SignUpData";
@@ -7,7 +8,10 @@ const initialState: UserState = {
   firstName: "",
   lastName: "",
   email: "",
+  id: "",
   token: "",
+  channels: [],
+  activeChannelMessages: [],
   isRegistrationSuccesfull: false,
   isFetching: false,
   isSuccess: false,
@@ -16,7 +20,7 @@ const initialState: UserState = {
 };
 
 export const signupUser = createAsyncThunk(
-  "users/signupUser",
+  "user/signupUser",
   async (
     { firstName, lastName, email, password, confirmPassword }: SignUpData,
     thunkAPI
@@ -37,7 +41,6 @@ export const signupUser = createAsyncThunk(
         }),
       });
       let data = await response.json();
-      console.log("data", data);
 
       if (response.status === 200) {
         return { ...data };
@@ -45,14 +48,13 @@ export const signupUser = createAsyncThunk(
         return thunkAPI.rejectWithValue(data);
       }
     } catch (e: any) {
-      console.log("Error", e.message);
       return { ...e.message };
     }
   }
 );
 
 export const signIn = createAsyncThunk(
-  "users/login",
+  "user/signIn",
   async ({ email, password }: SignInData, thunkAPI) => {
     try {
       const response = await fetch("http://localhost:5000/login", {
@@ -68,10 +70,93 @@ export const signIn = createAsyncThunk(
       });
 
       let data = await response.json();
-      console.log("response", data);
 
       if (response.status === 200) {
         localStorage.setItem("token", data.token);
+        return data;
+      } else {
+        return thunkAPI.rejectWithValue(data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+);
+
+export const signOut = createAsyncThunk(
+  "users/signOut",
+  async ({ token }: { token: string }, thunkAPI) => {
+    try {
+      const response = await fetch("http://localhost:5000/logout", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token,
+        }),
+      });
+      if (response.status === 200) {
+        clearState();
+      } else {
+        console.log("Sign out error ");
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+);
+
+export const getMessagesByChannel = createAsyncThunk(
+  "users/getmessages",
+  async ({ name, token }: GetMessages, thunkAPI) => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/channel/getmessages",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            token,
+          }),
+        }
+      );
+      let data = await response.json();
+      if (response.status === 200) {
+        return data;
+      } else {
+        return thunkAPI.rejectWithValue(data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+);
+
+// input: token, channel, message
+export const sendMessage = createAsyncThunk(
+  "users/sendMessage",
+  async ({ token, channel, message }: any, thunkAPI) => {
+    try {
+      const response = await fetch("http://localhost:5000/channel/addmessage", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token,
+          channel,
+          message,
+        }),
+      });
+      let data = await response.json();
+      if (response.status === 200) {
         return data;
       } else {
         return thunkAPI.rejectWithValue(data);
@@ -91,6 +176,7 @@ const userSlice = createSlice({
       state.lastName = "";
       state.email = "";
       state.token = "";
+      state.id = "";
       state.isError = false;
       state.isSuccess = false;
       state.isFetching = false;
@@ -104,12 +190,14 @@ const userSlice = createSlice({
       state.isFetching = true;
     });
     builder.addCase(signupUser.fulfilled, (state, { payload }) => {
+      state.isFetching = false;
       state.isRegistrationSuccesfull = true;
       return state;
     });
     builder.addCase(signupUser.rejected, (state, { payload }: any) => {
       state.isFetching = false;
-      state.errorMessage = payload;
+      state.isError = true;
+      state.errorMessage = payload.message;
     });
     builder.addCase(signIn.pending, (state, action) => {
       state.isFetching = true;
@@ -119,14 +207,41 @@ const userSlice = createSlice({
       state.firstName = payload.firstName;
       state.lastName = payload.lastName;
       state.token = payload.token;
+      state.channels = payload.channels;
+      state.id = payload.id;
+
       state.isSuccess = true;
       state.isFetching = false;
       return state;
     });
     builder.addCase(signIn.rejected, (state, { payload }: any) => {
+      state.errorMessage = payload.message;
+
+      state.isError = true;
       state.isFetching = false;
-      state.errorMessage = payload;
+      state.isSuccess = false;
     });
+    builder.addCase(getMessagesByChannel.pending, (state, action) => {
+      state.isFetching = true;
+    });
+    builder.addCase(getMessagesByChannel.fulfilled, (state, { payload }) => {
+      state.isFetching = false;
+      state.isError = false;
+      state.activeChannelMessages = payload.messages;
+    });
+    builder.addCase(
+      getMessagesByChannel.rejected,
+      (state, { payload }: any) => {
+        state.isFetching = false;
+        state.isError = true;
+        state.errorMessage = payload.message;
+      }
+    );
+    builder.addCase(sendMessage.pending, (state, action) => {});
+    builder.addCase(sendMessage.fulfilled, (state, { payload }) => {
+      state.activeChannelMessages = payload.messages;
+    });
+    builder.addCase(sendMessage.rejected, (state, { payload }: any) => {});
   },
 });
 
