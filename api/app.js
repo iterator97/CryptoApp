@@ -7,11 +7,11 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const app = express();
+app.use(cors());
 
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 app.use(cookieParser());
-app.use(cors());
 
 mongoose.connect(
   process.env.DB_CONNECTION,
@@ -24,15 +24,12 @@ mongoose.connect(
 
 const loginRoute = require("./routes/login");
 const registerRoute = require("./routes/register");
-const profileRoute = require("./routes/profile");
 const logoutRoute = require("./routes/logout");
 const channelRoute = require("./routes/channel");
 
 app.use("/login", loginRoute);
 app.use("/register", registerRoute);
-app.use("/profile", profileRoute);
 app.use("/logout", logoutRoute);
-
 app.use("/channel", channelRoute);
 
 const PORT = process.env.PORT || 5000;

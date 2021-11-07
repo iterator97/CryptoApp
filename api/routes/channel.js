@@ -4,6 +4,7 @@ const User = require("../models/User");
 const Channel = require("../models/Channel");
 const Creator = require("../models/Creator");
 
+// Create channel
 // input: token, channel name
 router.post("/", async (req, res) => {
   let token = req.body.token;
@@ -40,52 +41,67 @@ router.post("/", async (req, res) => {
   });
 });
 
+// Send message
 // input: token, channel, message
 router.post("/addmessage", async (req, res) => {
   let token = req.body.token;
-  User.findByToken(token, (err, user) => {
-    if (err) return res(err);
+  User.findByToken(token, async (err, user) => {
     if (user) {
-      // add message to channel
-      Channel.findOne({ name: req.body.name }, async function (err, channel) {
-        channel.messages.push({
-          userId: user._id.toString(),
-          firstName: user.firstName,
-          lastName: user.lastName,
-          content: req.body.content,
-          date: Date.now(),
-        });
-        await channel.save();
-        return res.status(200).json({
-          error: false,
-          message: "Message added",
-        });
-      });
+      try {
+        await Channel.findOne(
+          { name: req.body.channel },
+          async function (err, channel) {
+            if (!channel)
+              return res.status(400).json({
+                success: false,
+                message: "Channel not found",
+              });
+            await channel.addMessage({
+              userId: user._id.toString(),
+              firstName: user.firstName,
+              lastName: user.lastName,
+              content: req.body.message,
+              date: Date.now(),
+            });
+            await channel.save();
+            return res.status(200).json({
+              messages: channel.messages,
+              success: true,
+              message: "Message added",
+            });
+          }
+        );
+      } catch (error) {
+        console.log(error);
+      }
     } else {
       return res.status(400).json({
-        error: true,
-        message: "Cannot add message to channel, token undefined",
+        success: false,
+        message: "Unknown error",
       });
     }
   });
 });
 
+// Get messages by channel
 // input: token, channel
-router.get("/getmessages", async (req, res) => {
+router.post("/getmessages", async (req, res) => {
   let token = req.body.token;
-  User.findByToken(token, (err, user) => {
+  await User.findByToken(token, async (err, user) => {
     if (err) return res(err);
     if (user) {
-      // add message to channel
-      Channel.findOne({ name: req.body.name }, async function (err, channel) {
-        return res.status(200).json({
-          error: false,
-          messages: channel.messages,
-        });
-      });
+      await Channel.findOne(
+        { name: req.body.name },
+        async function (err, channel) {
+          return res.status(200).json({
+            isSucces: true,
+            messages: channel.messages,
+          });
+        }
+      );
     } else {
       return res.status(400).json({
-        error: true,
+        isSuccess: false,
         message: "Cannot add message to channel, token undefined",
       });
     }

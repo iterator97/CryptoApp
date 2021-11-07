@@ -1,0 +1,13 @@
+.message-content-container {
+  flex-direction: column;
+}
+
+.message-author {
+  display: flex;
+  flex-direction: row;
+  font-weight: bolder;
+}
+
+.message-last-name {
+  padding-left: 8px;
+}

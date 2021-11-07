@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Button, Menu, Typography, Avatar } from "antd";
 import { Link } from "react-router-dom";
 import {
+  CaretRightOutlined,
   HomeOutlined,
   BulbOutlined,
   FundOutlined,
   MenuOutlined,
   LoginOutlined,
-  MessageOutlined,
+  WechatOutlined,
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { userSelector } from "../../features/UserSlice";
@@ -18,7 +19,7 @@ import "./Navbar.css";
 const Navbar = () => {
   const [activeMenu, setActiveMenu] = useState(true);
   const [screenSize, setScreenSize] = useState(undefined);
-  const { token } = useSelector(userSelector);
+  const { isSuccess, channels } = useSelector(userSelector);
 
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
@@ -54,7 +55,7 @@ const Navbar = () => {
       </div>
       <div>
         {activeMenu && (
-          <Menu theme="dark">
+          <Menu theme="dark" mode="inline">
             <Menu.Item icon={<HomeOutlined />}>
               <Link to="/">Home</Link>
             </Menu.Item>
@@ -64,10 +65,27 @@ const Navbar = () => {
             <Menu.Item icon={<BulbOutlined />}>
               <Link to="/news">News</Link>
             </Menu.Item>
-            {token ? (
-              <Menu.Item icon={<MessageOutlined />}>
-                <Link to="/news">Channels</Link>
-              </Menu.Item>
+            {isSuccess && channels ? (
+              <Menu.SubMenu
+                key="sub1"
+                title="Channels"
+                theme="dark"
+                className="menu-submenu"
+                icon={<WechatOutlined />}
+              >
+                {channels.map((x) => {
+                  return (
+                    <Menu.Item
+                      className="menu-submenu-item"
+                      theme="dark"
+                      icon={<CaretRightOutlined />}
+                    >
+                      {x}
+                      <Link key={x.id} to={`/channels/${x}`}></Link>
+                    </Menu.Item>
+                  );
+                })}
+              </Menu.SubMenu>
             ) : null}
 
             <Menu.Item icon={<LoginOutlined />}>

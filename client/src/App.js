@@ -8,6 +8,7 @@ import {
   News,
   CryptoDetails,
   PreAccount,
+  Channel,
 } from "./components";
 import "./App.css";
 
@@ -36,6 +37,9 @@ const App = () => {
               </Route>
               <Route exact path="/preAccount">
                 <PreAccount />
+              </Route>
+              <Route exact path="/channels/:channelName">
+                <Channel />
               </Route>
             </Switch>
           </div>

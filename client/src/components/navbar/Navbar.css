@@ -15,6 +15,14 @@
   width: 100%;
 }
 
+.menu-submenu {
+  background-color: #001529 !important;
+}
+
+.menu-submenu-item {
+  background-color: #001529;
+  margin: 0 0 0 0 !important;
+}
 .logo {
   padding-top: 8px;
   margin: 0 0 0 15px;
